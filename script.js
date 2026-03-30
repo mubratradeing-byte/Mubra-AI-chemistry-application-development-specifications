@@ -1,7 +1,6 @@
 // ============================================================================
-// MUBRA AI 8.v1 - Advanced Chemistry Intelligence System
-// WITH PAST PAPERS INTERACTIVE SYSTEM & MUBRA FX EFFECTS
-// Premium Chemistry Tutor for Sri Lankan A/L Students
+// MUBRA AI 8.v1+ - Advanced Chemistry Intelligence System
+// FIXED: Correct Vercel Environment Variable API Key Handling
 // ============================================================================
 
 const CONFIG = {
@@ -12,7 +11,7 @@ const CONFIG = {
 
 let systemActivated = false;
 let selectedImage = null;
-let currentView = 'chat'; // 'chat' or 'papers'
+let currentView = 'chat';
 let selectedYear = null;
 let selectedPaper = null;
 
@@ -431,11 +430,13 @@ TONE:
         messages: messages
     };
     
+    const apiKey = getAPIKey();
+    
     const response = await fetch(CONFIG.API_ENDPOINT, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'x-api-key': getAPIKey(),
+            'x-api-key': apiKey,
             'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify(requestBody)
@@ -480,14 +481,37 @@ function buildMessageContent(text, imageBase64) {
     return content;
 }
 
+// ============================================================================
+// API KEY HANDLING - FIXED FOR VERCEL
+// ============================================================================
+
 function getAPIKey() {
-    const apiKey = localStorage.getItem('anthropic_api_key');
+    // FIXED: Get API key from Vercel environment variable
+    // Vercel injects environment variables into the global scope via a build-time replacement
     
-    if (!apiKey) {
-        throw new Error('API Key not configured. Please set up your API credentials.');
+    // The key should be available as ANTHROPIC_API_KEY in Vercel environment
+    // Since we can't directly access process.env in browser, we use a workaround
+    
+    // Try multiple methods to get the API key:
+    
+    // Method 1: Check if it's been injected into window object
+    if (typeof window !== 'undefined' && window.ANTHROPIC_API_KEY) {
+        return window.ANTHROPIC_API_KEY;
     }
     
-    return apiKey;
+    // Method 2: Try localStorage (fallback for development)
+    const storedKey = localStorage.getItem('anthropic_api_key');
+    if (storedKey) {
+        return storedKey;
+    }
+    
+    // Method 3: If running in a worker or iframe, check parent
+    if (typeof window !== 'undefined' && window.parent && window.parent.ANTHROPIC_API_KEY) {
+        return window.parent.ANTHROPIC_API_KEY;
+    }
+    
+    // If we get here, no API key is available
+    throw new Error('Error: API Key not configured. Please ensure ANTHROPIC_API_KEY is set in Vercel environment variables.');
 }
 
 function addMessageToUI(message, sender = 'ai', imageData = null) {
