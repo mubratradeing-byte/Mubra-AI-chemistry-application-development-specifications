@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mubra AI 8.v1 - Advanced Chemistry Intelligence</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #001F3F;
+            --accent: #D4AF37;
+            --dark-bg: #0a1628;
+            --light-text: #ffffff;
+            --dark-text: #1a1a1a;
+            --border-subtle: #1a2f4a;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0d1f2d 100%);
+            color: var(--light-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        
+        .container-main {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           SIDEBAR STYLES
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #001a2e 0%, #002240 100%);
+            border-right: 2px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(212, 175, 55, 0.15);
+        }
+        
+        .sidebar-header {
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+        }
+        
+        .logo-svg {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            display: block;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+        }
+        
+        .logo-text {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        
+        .logo-subtitle {
+            font-size: 10px;
+            color: rgba(212, 175, 55, 0.7);
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+        
+        .papers-section {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .papers-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+        
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        .paper-btn {
+            aspect-ratio: 1;
+            border: 2px solid var(--accent);
+            background: rgba(212, 175, 55, 0.05);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .paper-btn:hover {
+            background: rgba(212, 175, 55, 0.15);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px) scale(1.05);
+        }
+        
+        .paper-btn:active {
+            transform: translateY(0) scale(1);
+        }
+        
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 2px solid var(--accent);
+            text-align: center;
+            font-size: 10px;
+            color: rgba(212, 175, 55, 0.6);
+            line-height: 1.6;
+            background: rgba(212, 175, 55, 0.05);
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           MAIN CONTENT AREA
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0a1628 0%, #0d1f2d 100%);
+        }
+        
+        .header {
+            padding: 16px 24px;
+            background: linear-gradient(90deg, rgba(0, 31, 63, 0.8) 0%, rgba(0, 31, 63, 0.6) 100%);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+        }
+        
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+        
+        .activation-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c9a02d 100%);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .activation-btn:hover {
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           CHAT CONTAINER
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.5);
+        }
+        
+        .message {
+            display: flex;
+            animation: slideInUpMsg 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes slideInUpMsg {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+        
+        .user-message .message-content {
+            background: var(--primary);
+            color: var(--light-text);
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+        
+        .ai-message .message-content {
+            background: var(--light-text);
+            color: var(--dark-text);
+            border: 2px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+        
+        .message-image {
+            max-width: 200px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 2px solid var(--accent);
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           INPUT AREA
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .input-area {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(0, 31, 63, 0.6) 0%, rgba(0, 31, 63, 0.8) 100%);
+            border-top: 2px solid var(--accent);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .camera-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent);
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .camera-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        #imageInput {
+            display: none;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            border: 2px solid var(--accent);
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .image-remove:hover {
+            transform: scale(1.2);
+        }
+        
+        .text-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--accent);
+            color: var(--light-text);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+            transition: all 0.3s ease;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        .text-input::placeholder {
+            color: rgba(212, 175, 55, 0.5);
+        }
+        
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c9a02d 100%);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .send-btn:hover:not(:disabled) {
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           MODAL STYLES
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #001f3f 0%, #002244 100%);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 32px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        
+        .modal-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--accent);
+            color: var(--light-text);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        
+        .modal-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        .modal-input::placeholder {
+            color: rgba(212, 175, 55, 0.5);
+        }
+        
+        .modal-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c9a02d 100%);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        
+        .modal-button:hover {
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--light-text);
+            transform: rotate(90deg);
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           MUBRA FX - PREMIUM EFFECTS SYSTEM
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        /* Glow Effects on Hover */
+        .paper-btn:hover,
+        .activation-btn:hover,
+        .send-btn:hover,
+        .camera-btn:hover,
+        .modal-button:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 20px rgba(212, 175, 55, 0.1) !important;
+        }
+        
+        /* Text Typing Cursor */
+        @keyframes typingCursor {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 2px;
+            animation: typingCursor 0.7s infinite;
+            vertical-align: middle;
+        }
+        
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 4px;
+            animation: loadingPulse 1.4s infinite;
+        }
+        
+        .loading:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .loading:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes loadingPulse {
+            0%, 80%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* ════════════════════════════════════════════════════════════════════════
+           PAST PAPERS SYSTEM STYLES
+           ════════════════════════════════════════════════════════════════════════ */
+        
+        .past-papers-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            background: linear-gradient(135deg, #0a1628 0%, #0d1f2d 100%);
+        }
+        
+        .past-papers-view.active {
+            display: flex;
+            animation: slideInFromRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .papers-header {
+            padding: 20px 24px;
+            background: linear-gradient(90deg, rgba(0, 31, 63, 0.8) 0%, rgba(0, 31, 63, 0.6) 100%);
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+        }
+        
+        .papers-back-btn {
+            width: 44px;
+            height: 44px;
+            border: 2px solid var(--accent);
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .papers-back-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+            transform: translateX(-2px);
+        }
+        
+        .papers-view-title {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+        
+        .papers-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        /* Paper Selection Cards */
+        .paper-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            animation: slideInUp 0.4s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .paper-card {
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.1) 100%);
+        }
+        
+        .paper-card-icon {
+            font-size: 36px;
+            color: var(--accent);
+        }
+        
+        .paper-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+        }
+        
+        .paper-card-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+        
+        /* Question List */
+        .question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: slideInUp 0.4s ease;
+        }
+        
+        .question-item {
+            padding: 16px;
+            background: rgba(0, 31, 63, 0.6);
+            border: 2px solid var(--accent);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .question-item:hover {
+            background: rgba(0, 31, 63, 0.8);
+            transform: translateX(8px);
+            box-shadow: 0 6px 16px rgba(212, 175, 55, 0.2);
+        }
+        
+        .question-num {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+        
+        .question-text {
+            font-size: 14px;
+            color: var(--light-text);
+            font-weight: 500;
+        }
+        
+        /* Question Detail View */
+        .question-detail {
+            animation: slideInUp 0.4s ease;
+        }
+        
+        .question-detail-header {
+            padding: 20px;
+            background: rgba(0, 31, 63, 0.6);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .question-detail-label {
+            font-size: 11px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .question-detail-text {
+            font-size: 16px;
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        
+        .question-detail-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .ask-ai-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, #c9a02d 100%);
+            color: var(--dark-text);
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .ask-ai-btn:hover {
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .ask-ai-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Welcome Message */
+        .welcome-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            margin: 20px;
+        }
+        
+        .welcome-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        .welcome-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        /* KaTeX rendering */
+        .katex-display {
+            margin: 8px 0;
+        }
+        
+        .katex {
+            font-size: 1em;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .papers-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .paper-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-main">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <radialGradient id="eyeGlow" cx="35%" cy="35%">
+                            <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:0.3" />
+                        </radialGradient>
+                    </defs>
+                    
+                    <!-- Gold Ring (outer) -->
+                    <circle cx="50" cy="50" r="48" fill="none" stroke="#D4AF37" stroke-width="1.5" opacity="0.6"/>
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="#D4AF37" stroke-width="0.5" opacity="0.4"/>
+                    
+                    <!-- Inverted Triangle -->
+                    <polygon points="50,15 85,75 15,75" fill="none" stroke="#FFFFFF" stroke-width="2.5" opacity="0.9"/>
+                    
+                    <!-- Inner Gold Ring (through triangle) -->
+                    <circle cx="50" cy="50" r="32" fill="none" stroke="#D4AF37" stroke-width="1.2" opacity="0.7"/>
+                    
+                    <!-- Wolf Head (geometric polygon style) -->
+                    <g transform="translate(50, 48)">
+                        <!-- Head main shape -->
+                        <polygon points="0,-12 8,-8 10,0 8,8 0,10 -8,8 -10,0 -8,-8" fill="#D4AF37" opacity="0.8"/>
+                        
+                        <!-- Snout -->
+                        <polygon points="6,-4 12,-2 12,2 6,4" fill="#D4AF37" opacity="0.9"/>
+                        
+                        <!-- Left ear -->
+                        <polygon points="-8,-12 -6,-18 -4,-12" fill="#D4AF37" opacity="0.85"/>
+                        
+                        <!-- Right ear -->
+                        <polygon points="8,-12 6,-18 4,-12" fill="#D4AF37" opacity="0.85"/>
+                        
+                        <!-- Left eye with glow -->
+                        <circle cx="-3" cy="-4" r="2.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
+                        <circle cx="-3" cy="-4" r="1.5" fill="#D4AF37"/>
+                        
+                        <!-- Right eye with glow -->
+                        <circle cx="3" cy="-4" r="2.5" fill="url(#eyeGlow)" filter="url(#glow)"/>
+                        <circle cx="3" cy="-4" r="1.5" fill="#D4AF37"/>
+                    </g>
+                </svg>
+                <div class="logo-text">MUBRA AI</div>
+                <div class="logo-subtitle">Advanced Chemistry<br>Intelligence 8.v1</div>
+            </div>
+            
+            <div class="papers-section">
+                <div class="papers-title">Past Papers</div>
+                <div class="papers-grid" id="papersGrid">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div style="margin-bottom: 8px;">Powered by<br><strong>Mubra Webworks</strong></div>
+                <div>Main Sponsor:<br><strong>Mubra Trading</strong></div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-title">MUBRA AI 8.v1 - Chemistry Intelligence System</div>
+                <button id="activationBtn" class="activation-btn">
+                    <i class="fas fa-shield"></i> System Activation
+                </button>
+            </div>
+            
+            <!-- Chat Container (Default View) -->
+            <div class="chat-container" id="chatView">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-content">
+                            <div class="welcome-title">ස්වාගතයි! Welcome</div>
+                            <div class="welcome-subtitle">
+                                Mubra AI 8.v1 - Advanced Chemistry Intelligence System
+                                <br><br>
+                                රසායන ශිල්පය ඉගෙන ගැනීම සඳහා ඔබගේ ප්‍රිමිය ගුරු.
+                                <br>
+                                Your premium chemistry tutor for A/L studies.
+                                <br><br>
+                                <i class="fas fa-flask-vial" style="margin-right: 8px;"></i>
+                                Organic • Inorganic • Physical Chemistry
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <button id="cameraBtn" class="camera-btn" title="Upload Image">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                        <input type="file" id="imageInput" accept="image/*">
+                        <div id="imagePreviewContainer"></div>
+                        <textarea id="messageInput" class="text-input" placeholder="ඔබගේ කෙමිස්ට්‍රි ප්‍රශ්නය ඇතුලු කරන්න... Ask your chemistry question..." rows="1"></textarea>
+                    </div>
+                    <button id="sendBtn" class="send-btn" title="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Past Papers View -->
+            <div class="past-papers-view" id="pastPapersView">
+                <div class="papers-header">
+                    <button class="papers-back-btn" id="papersBackBtn" title="Back to Chat">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="papers-view-title" id="papersViewTitle">2023 A/L Chemistry Past Papers</div>
+                </div>
+                
+                <div class="papers-content" id="papersContent">
+                    <!-- Paper selection or question list will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Activation Modal -->
+    <div id="activationModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-title">System Activation Required</div>
+            <input type="text" id="activationCode" class="modal-input" placeholder="Enter 16-Digit Activation Code" maxlength="16">
+            <button id="activateBtn" class="modal-button">Activate System</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
