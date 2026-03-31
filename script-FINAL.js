@@ -1,6 +1,6 @@
 // ============================================================================
-// MUBRA AI 8.v1+ - Advanced Chemistry Intelligence System
-// FIXED: Correct Vercel Environment Variable API Key Handling
+// MUBRA AI 8.v1+ - FINAL WORKING VERSION
+// localStorage based API key handling
 // ============================================================================
 
 const CONFIG = {
@@ -16,7 +16,7 @@ let selectedYear = null;
 let selectedPaper = null;
 
 // ============================================================================
-// PAST PAPERS DATA STRUCTURE
+// PAST PAPERS DATA
 // ============================================================================
 
 const PAST_PAPERS_DATA = {
@@ -80,7 +80,6 @@ const PAST_PAPERS_DATA = {
     }
 };
 
-// Generate all years from 1985-2025
 function generatePastPapersData() {
     for (let year = 2023; year >= 1985; year -= 1) {
         if (!PAST_PAPERS_DATA[year]) {
@@ -102,14 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeEventListeners() {
-    // Activation Modal
     document.getElementById('activationBtn').addEventListener('click', openModal);
     document.getElementById('activateBtn').addEventListener('click', activateSystem);
     document.getElementById('activationCode').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateSystem();
     });
     
-    // Chat Interface
     document.getElementById('sendBtn').addEventListener('click', sendMessage);
     document.getElementById('messageInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -119,13 +116,11 @@ function initializeEventListeners() {
     });
     document.getElementById('messageInput').addEventListener('input', autoResizeTextarea);
     
-    // Image Upload
     document.getElementById('cameraBtn').addEventListener('click', () => {
         document.getElementById('imageInput').click();
     });
     document.getElementById('imageInput').addEventListener('change', handleImageUpload);
     
-    // Past Papers Navigation
     document.getElementById('papersBackBtn').addEventListener('click', closePastPapersView);
 }
 
@@ -250,7 +245,6 @@ function goBackToQuestions() {
 async function askAIForAnswer(questionNum, questionText) {
     const answerContainer = document.getElementById('aiAnswerContainer');
     
-    // Show loading state
     answerContainer.innerHTML = `
         <div class="paper-answer-container">
             <div class="paper-answer-label">MUBRA AI SOLUTION</div>
@@ -263,8 +257,6 @@ async function askAIForAnswer(questionNum, questionText) {
     try {
         const prompt = `${questionNum}: ${questionText}`;
         const response = await queryAI(prompt);
-        
-        // Type out the response with effect
         displayTypewriterAnswer(response, answerContainer);
     } catch (error) {
         answerContainer.innerHTML = `
@@ -294,11 +286,9 @@ function displayTypewriterAnswer(text, container) {
             typewriterElement.textContent += text[charIndex];
             charIndex++;
             
-            // Adjust speed - faster typing for better UX
             const delay = Math.random() > 0.9 ? 5 : 15;
             setTimeout(typeCharacter, delay);
         } else {
-            // Render math formulas after typing
             setTimeout(() => renderMathFormulas(), 100);
         }
     }
@@ -325,16 +315,13 @@ async function sendMessage() {
         return;
     }
     
-    // Add user message to UI
     addMessageToUI(message, 'user', selectedImage);
     
-    // Clear input
     messageInput.value = '';
     messageInput.style.height = 'auto';
     selectedImage = null;
     clearImagePreview();
     
-    // Show loading indicator
     const loadingId = showLoadingIndicator();
     
     try {
@@ -367,11 +354,9 @@ function displayTypewriterMessage(text) {
             contentEl.textContent += text[charIndex];
             charIndex++;
             
-            // Variable speed for natural typing effect
             const delay = Math.random() > 0.85 ? 5 : 20;
             setTimeout(typeCharacter, delay);
         } else {
-            // Remove typing cursor
             contentEl.classList.remove('message-typing');
             renderMathFormulas();
         }
@@ -459,13 +444,11 @@ TONE:
 function buildMessageContent(text, imageBase64) {
     const content = [];
     
-    // Add text
     content.push({
         type: 'text',
         text: text
     });
     
-    // Add image if present
     if (imageBase64) {
         const base64Data = imageBase64.split(',')[1];
         content.push({
@@ -482,36 +465,17 @@ function buildMessageContent(text, imageBase64) {
 }
 
 // ============================================================================
-// API KEY HANDLING - FIXED FOR VERCEL
+// API KEY HANDLING - SIMPLE & WORKING
 // ============================================================================
 
 function getAPIKey() {
-    // FIXED: Get API key from Vercel environment variable
-    // Vercel injects environment variables into the global scope via a build-time replacement
+    const apiKey = localStorage.getItem('anthropic_api_key');
     
-    // The key should be available as ANTHROPIC_API_KEY in Vercel environment
-    // Since we can't directly access process.env in browser, we use a workaround
-    
-    // Try multiple methods to get the API key:
-    
-    // Method 1: Check if it's been injected into window object
-    if (typeof window !== 'undefined' && window.ANTHROPIC_API_KEY) {
-        return window.ANTHROPIC_API_KEY;
+    if (!apiKey || apiKey.trim() === '') {
+        throw new Error('API Key not found. Please refresh and enter your API key when prompted.');
     }
     
-    // Method 2: Try localStorage (fallback for development)
-    const storedKey = localStorage.getItem('anthropic_api_key');
-    if (storedKey) {
-        return storedKey;
-    }
-    
-    // Method 3: If running in a worker or iframe, check parent
-    if (typeof window !== 'undefined' && window.parent && window.parent.ANTHROPIC_API_KEY) {
-        return window.parent.ANTHROPIC_API_KEY;
-    }
-    
-    // If we get here, no API key is available
-    throw new Error('Error: API Key not configured. Please ensure ANTHROPIC_API_KEY is set in Vercel environment variables.');
+    return apiKey.trim();
 }
 
 function addMessageToUI(message, sender = 'ai', imageData = null) {
@@ -522,7 +486,6 @@ function addMessageToUI(message, sender = 'ai', imageData = null) {
     const contentEl = document.createElement('div');
     contentEl.className = 'message-content';
     
-    // Add image if present
     if (imageData && sender === 'user') {
         const imgEl = document.createElement('img');
         imgEl.className = 'message-image';
@@ -536,7 +499,6 @@ function addMessageToUI(message, sender = 'ai', imageData = null) {
     messageEl.appendChild(contentEl);
     chatMessages.appendChild(messageEl);
     
-    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -572,13 +534,11 @@ function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
     
-    // Validate file type
     if (!file.type.startsWith('image/')) {
         showNotification('Please select an image file', 'error');
         return;
     }
     
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
         showNotification('Image size must be less than 5MB', 'error');
         return;
@@ -626,7 +586,6 @@ function renderMathFormulas() {
     const chatMessages = document.getElementById('chatMessages');
     const papersContent = document.getElementById('papersContent');
     
-    // Render in chat
     if (chatMessages) {
         chatMessages.querySelectorAll('.ai-message .message-content').forEach(el => {
             try {
@@ -643,7 +602,6 @@ function renderMathFormulas() {
         });
     }
     
-    // Render in papers view
     if (papersContent) {
         papersContent.querySelectorAll('.paper-answer-text').forEach(el => {
             try {
